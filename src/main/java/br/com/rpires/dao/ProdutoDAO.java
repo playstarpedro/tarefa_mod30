@@ -8,6 +8,9 @@ import java.sql.SQLException;
 
 import br.com.rpires.dao.generic.GenericDAO;
 import br.com.rpires.domain.Produto;
+import br.com.rpires.exceptions.DAOException;
+import br.com.rpires.exceptions.MaisDeUmRegistroException;
+import br.com.rpires.exceptions.TableException;
 
 /**
  * @author rodrigo.pires
@@ -30,14 +33,15 @@ public class ProdutoDAO extends GenericDAO<Produto, String> implements IProdutoD
 		entityCadastrado.setDescricao(entity.getDescricao());
 		entityCadastrado.setNome(entity.getNome());
 		entityCadastrado.setValor(entity.getValor());
+		entityCadastrado.setIsPerecivel(entity.getIsPerecivel());
 	}
 
 	@Override
 	protected String getQueryInsercao() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("INSERT INTO TB_PRODUTO ");
-		sb.append("(ID, CODIGO, NOME, DESCRICAO, VALOR)");
-		sb.append("VALUES (nextval('sq_produto'),?,?,?,?)");
+		sb.append("(ID, CODIGO, NOME, DESCRICAO, VALOR, ISPERECIVEL)");
+		sb.append("VALUES (nextval('sq_produto'),?,?,?,?,?)");
 		return sb.toString();
 	}
 
@@ -47,6 +51,7 @@ public class ProdutoDAO extends GenericDAO<Produto, String> implements IProdutoD
 		stmInsert.setString(2, entity.getNome());
 		stmInsert.setString(3, entity.getDescricao());
 		stmInsert.setBigDecimal(4, entity.getValor());
+		stmInsert.setBoolean(5, entity.getIsPerecivel());
 	}
 
 	@Override
@@ -84,5 +89,4 @@ public class ProdutoDAO extends GenericDAO<Produto, String> implements IProdutoD
 	protected void setParametrosQuerySelect(PreparedStatement stmExclusao, String valor) throws SQLException {
 		stmExclusao.setString(1, valor);
 	}
-
 }

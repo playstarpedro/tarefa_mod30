@@ -3,11 +3,16 @@
  */
 package br.com.rpires;
 
+import static br.com.rpires.dao.generic.jdbc.ConnectionFactory.getConnection;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Collection;
 
 import org.junit.After;
@@ -33,6 +38,11 @@ public class ProdutoDAOTest {
 	public ProdutoDAOTest() {
 		produtoDao = new ProdutoDAO();
 	}
+
+//	@After
+//	public void delteALl() throws DAOException {
+//		excluirProdutos();
+//	}
 	
 	@After
 	public void end() throws DAOException {
@@ -53,6 +63,7 @@ public class ProdutoDAOTest {
 		produto.setDescricao("Produto 1");
 		produto.setNome("Produto 1");
 		produto.setValor(BigDecimal.TEN);
+		produto.setIsPerecivel(true);
 		produtoDao.cadastrar(produto);
 		return produto;
 	}
@@ -116,5 +127,43 @@ public class ProdutoDAOTest {
 		assertTrue(list != null);
 		assertTrue(list.size() == 0);
 		
+	}
+
+	private void executeDelete(String sql) throws DAOException {
+		Connection connection = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		try {
+			connection = getConnection();
+			stm = connection.prepareStatement(sql);
+			stm.executeUpdate();
+
+		} catch (SQLException e) {
+			throw new DAOException("ERRO EXLUINDO OBJETO ", e);
+		} finally {
+			closeConnection(connection, stm, rs);
+		}
+	}
+
+	protected void closeConnection(Connection connection, PreparedStatement stm, ResultSet rs) {
+		try {
+			if (rs != null && !rs.isClosed()) {
+				rs.close();
+			}
+			if (stm != null && !stm.isClosed()) {
+				stm.close();
+			}
+			if (connection != null && !stm.isClosed()) {
+				connection.close();
+			}
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+
+	private void excluirProdutos() throws DAOException {
+		String sqlV = "DELETE FROM TB_PRODUTO";
+		executeDelete(sqlV);
 	}
 }

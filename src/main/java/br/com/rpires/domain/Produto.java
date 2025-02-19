@@ -33,6 +33,18 @@ public class Produto implements Persistente {
 	@ColunaTabela(dbName = "valor", setJavaName = "setValor")
 	private BigDecimal valor;
 
+	@ColunaTabela(dbName = "isPerecivel", setJavaName = "setIsPerecivel")
+	private Boolean isPerecivel;
+
+	public boolean getIsPerecivel() {
+		return isPerecivel;
+	}
+
+	public void setIsPerecivel(Boolean perecivel) {
+		this.isPerecivel = perecivel;
+	}
+
+
 	public String getCodigo() {
 		return codigo;
 	}
